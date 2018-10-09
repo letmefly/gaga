@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package pb;
+
+service Stream {
+	rpc Stream(stream StreamFrame) returns (stream StreamFrame) {};
+}
+
+enum StreamFrameType {
+	Message = 0;
+	Kick = 1;
+	Ping = 2;
+}
+
+message StreamFrame {
+	StreamFrameType Type = 1;
+	int32 MsgId = 2;
+	bytes MsgData = 3;
+}

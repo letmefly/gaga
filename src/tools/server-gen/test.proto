@@ -1,0 +1,76 @@
+syntax = "proto3";
+
+package pb;
+
+message TemplateMsgTest {
+	message TemplateMsgTestChild {
+		int32 a = 1;
+		string b = 2;
+	}
+	int32 i = 1;
+	string s = 2;
+}
+
+message TemplateMsgTestAck {
+	repeated int32 intList = 1;
+	repeated string strList = 2;
+}
+
+message TemplateMsgTestNtf {
+	repeated int32 intList = 1;
+	repeated string strList = 2;
+}
+
+service Stream {
+	rpc Stream(stream StreamFrame) returns (stream StreamFrame) {};
+	rpc Get(GetParam) returns (GetRet) {};
+	rpc Set(SetParam) returns (SetRet) {};
+	rpc Cmd(CmdParam) returns (CmdRet) {};
+}
+
+service TestService {
+	rpc TestService_Cmd(CmdParam) returns (CmdRet) {};
+}
+
+enum StreamFrameType {
+	Message = 0;
+	Kick = 1;
+	Ping = 2;
+}
+
+message StreamFrame {
+	StreamFrameType Type = 1;
+	int32 MsgId = 2;
+	bytes MsgData = 3;
+}
+
+message GetParam {
+	string k = 1;
+}
+
+message GetRet {
+	string err = 1;
+	string k = 2;
+	string v = 3;
+}
+
+message SetParam {
+	string k = 1;
+	string v = 2;
+}
+
+message SetRet {
+	string err = 1;
+	string k = 2;
+	string v = 3;
+}
+
+message CmdParam {
+	string cmd = 1;
+	string data = 2;
+}
+
+message CmdRet {
+	string err = 1;
+	string cmdRet = 2;
+}
