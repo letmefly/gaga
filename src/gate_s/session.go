@@ -30,22 +30,6 @@ type session struct {
 	cancel     context.CancelFunc
 }
 
-/*
-func newSession(userId string) *session {
-	sess := &session{
-		userId:     userId,
-		sessId:     utils.CreateUUID(),
-		agent:      nil,
-		serviceMap: make(map[string]string, 0),
-		streams:    make(map[string]pb.Stream_StreamClient, 0),
-		activeTime: time.Now(),
-	}
-
-	sess.init()
-
-	return sess
-}
-*/
 func (s *session) init(userId string) {
 	s.userId = userId
 	s.sessId = utils.CreateUUID()

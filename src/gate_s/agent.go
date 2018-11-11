@@ -45,19 +45,6 @@ func newAgent(sessId string, clientSend clientSendFunc) *agent {
 	a.inSeq = -1
 	a.outSeq = 0
 	return a
-	/*
-		a := &agent{
-			sessId:     sessId,
-			clientSend: clientSend,
-			inBuf:      make(chan []byte, 10),
-			outBuf:     make(chan []byte, 10),
-			status:     0,
-			inSeq:      -1,
-			outSeq:     0,
-		}
-
-		return a
-	*/
 }
 
 func freeAgent(a *agent) {

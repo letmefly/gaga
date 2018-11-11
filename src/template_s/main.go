@@ -8,17 +8,17 @@ import (
 )
 
 import (
+	"pb"
 	"services"
 	"utils"
 
 	"google.golang.org/grpc"
 )
 
-/************************************* main *************************************/
 func main() {
 	ctx, cancel := context.WithCancel(context.Background())
-	server := &server{}
-	server.init(ctx)
+	server := &Server{}
+	server.Init(ctx)
 
 	serviceAddr := "127.0.0.1:9990"
 	serviceId := utils.CreateServiceId("template", serviceAddr)
@@ -31,14 +31,13 @@ func main() {
 	log.Println("Listen on", lis.Addr())
 
 	s := grpc.NewServer()
-	//pb.RegisterStreamServer(s, server)
-	server.registerPbServers(s)
+	pb.RegisterStreamServer(s, server)
 	services.Register(context.Background(), &services.ServiceConf{
 		ServiceType:    "template",
 		ServiceId:      serviceId,
 		ServiceAddr:    serviceAddr,
 		IsStream:       true,
-		ProtoUseList:   server.getProtoUseList(),
+		ProtoUseList:   server.GetProtoUseList(),
 		ServiceUseList: []string{},
 		TTL:            4,
 	})

@@ -1,0 +1,9 @@
+syntax = "proto3";
+
+package auth;
+
+message Test {
+	int32 i = 1;
+	string s = 2;
+}
+

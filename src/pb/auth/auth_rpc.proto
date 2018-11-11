@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package auth;
+
+service Auth {
+	rpc Login(LoginParam) returns (LoginRet) {};
+}
+
+message LoginParam {
+	string k = 1;
+}
+
+message LoginRet {
+	string err = 1;
+	string k = 2;
+	string v = 3;
+}
+

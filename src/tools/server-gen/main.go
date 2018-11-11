@@ -43,8 +43,6 @@ func main() {
 					generator.gen()
 				}
 			}
-
 		}
-
 	}
 }

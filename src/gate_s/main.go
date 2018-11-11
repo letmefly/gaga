@@ -148,6 +148,7 @@ func httpHandler(w http.ResponseWriter, req *http.Request) {
 		return err
 	})
 	agent.start(ctx)
+	defer freeAgent(agent)
 
 	body, err := ioutil.ReadAll(req.Body)
 	if err != nil {
@@ -157,8 +158,8 @@ func httpHandler(w http.ResponseWriter, req *http.Request) {
 	select {
 	case <-ctx.Done():
 	}
-	freeAgent(agent)
 }
+
 func wsHandler(w http.ResponseWriter, r *http.Request) {
 	conn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {

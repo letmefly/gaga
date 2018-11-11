@@ -244,7 +244,7 @@ func (m *ServiceManager) removeService(serviceId string) {
 func (m *ServiceManager) createTLB(conf *ServiceConf) {
 	for _, v := range conf.ProtoUseList {
 		msgName := v
-		msgId := utils.HashCode(msgName)
+		msgId := utils.HashCode(conf.ServiceType + msgName)
 		m.toMsgIdMap[msgName] = msgId
 		m.toMsgNameMap[msgId] = msgName
 		m.toServiceTypeMap[msgId] = conf.ServiceType

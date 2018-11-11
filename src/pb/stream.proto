@@ -3,7 +3,7 @@ syntax = "proto3";
 package pb;
 
 service Stream {
-	rpc Stream(stream StreamFrame) returns (stream StreamFrame) {};
+	rpc CreateStream(stream StreamFrame) returns (stream StreamFrame) {};
 }
 
 enum StreamFrameType {
@@ -14,6 +14,17 @@ enum StreamFrameType {
 
 message StreamFrame {
 	StreamFrameType Type = 1;
-	int32 MsgId = 2;
-	bytes MsgData = 3;
+	string Codec = 2;
+	int32 MsgId = 3;
+	bytes MsgData = 4;
+}
+
+message PostParam {
+	int32 MsgId = 1;
+	bytes Data = 2;
+}
+
+message PostRet {
+	int32 MsgId = 1;
+	bytes Data = 2;
 }
