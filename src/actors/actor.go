@@ -2,7 +2,6 @@ package actors
 
 import (
 	"errors"
-	//"fmt"
 	"reflect"
 )
 
@@ -32,7 +31,7 @@ func (a *actor) init(actorId int32, host ActorHost) {
 }
 
 func (a *actor) putCall(callRetChan chan *actorCallRet, function interface{}, params ...interface{}) error {
-	method, err := a.getHostMethod(function, params)
+	method, err := a.getHostMethod(false, function, params)
 	if err != nil {
 		return err
 	}
@@ -50,7 +49,26 @@ func (a *actor) putCall(callRetChan chan *actorCallRet, function interface{}, pa
 	return nil
 }
 
-func (a *actor) getHostMethod(function interface{}, params []interface{}) (reflect.Method, error) {
+func (a *actor) putAsynCall(callRetChan chan *actorCallRet, function interface{}, params ...interface{}) error {
+	method, err := a.getHostMethod(true, function, params)
+	if err != nil {
+		return err
+	}
+	methodParams := make([]reflect.Value, len(params)+1)
+	methodParams[0] = reflect.ValueOf(a.host)
+	for i := 0; i < len(params); i++ {
+		methodParams[i+1] = reflect.ValueOf(params[i])
+	}
+	call := &actorCall{
+		method:      method,
+		params:      methodParams,
+		callRetChan: callRetChan,
+	}
+	a.callQueue <- call
+	return nil
+}
+
+func (a *actor) getHostMethod(isAsyn bool, function interface{}, params []interface{}) (reflect.Method, error) {
 	var method reflect.Method
 	funcT := reflect.TypeOf(function)
 	funcV := reflect.ValueOf(function)
@@ -65,11 +83,17 @@ func (a *actor) getHostMethod(function interface{}, params []interface{}) (refle
 	if funcT.In(0) != hostT {
 		return method, errors.New("dest actor id or call function is not right")
 	}
-	if funcT.NumOut() != 1 {
-		return method, errors.New("call function must return only 1 result")
-	}
-	if funcT.Out(0).Name() != "error" {
-		return method, errors.New("call function's second return type must be error")
+	if isAsyn == false {
+		if funcT.NumOut() != 1 {
+			return method, errors.New("call function must return only 1 result")
+		}
+		if funcT.Out(0).Name() != "error" {
+			return method, errors.New("call function's second return type must be error")
+		}
+	} else {
+		if funcT.NumOut() != 0 {
+			return method, errors.New("call function has no return result")
+		}
 	}
 	// check function params
 	if len(params) != funcT.NumIn()-1 {
@@ -103,7 +127,9 @@ func (a *actor) startLoop() {
 			case call, _ := <-a.callQueue:
 				if nil != call {
 					ret := call.method.Func.Call(call.params)
-					call.callRetChan <- &actorCallRet{results: ret}
+					if call.callRetChan != nil {
+						call.callRetChan <- &actorCallRet{results: ret}
+					}
 				}
 			default:
 			}

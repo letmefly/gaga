@@ -23,6 +23,10 @@ func (r *Room) GetUserList(userId string, out *UserList) error {
 	return nil
 }
 
+func (r *Room) Join(userId string) {
+	fmt.Println("Join Room: ", userId)
+}
+
 func main() {
 	actors.Init()
 	room := &Room{}
@@ -43,6 +47,11 @@ func main() {
 		fmt.Println(err)
 	}
 	fmt.Println(userList.Users)
+
+	err = actors.AsynCall(actorId, (*Room).Join, "chris-li")
+	if err != nil {
+		fmt.Println(err)
+	}
 
 	for {
 		//actors.Call(actorId, (*Room).Add, 200, 300)

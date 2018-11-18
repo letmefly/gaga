@@ -52,6 +52,19 @@ func Call(actorId int32, function interface{}, params ...interface{}) error {
 	return nil
 }
 
+func AsynCall(actorId int32, function interface{}, params ...interface{}) error {
+	currActor, ok := _actorManager.getActor(actorId)
+	if !ok {
+		log.Println("ERR: no actor find for ", actorId)
+		return errors.New(fmt.Sprintf("ERR: no actor find for %d", actorId))
+	}
+	err := currActor.putAsynCall(nil, function, params...)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 /*
 func Call(actorId int32, function interface{}, params ...interface{}) (interface{}, error) {
 	currActor, ok := _actorManager.getActor(actorId)
