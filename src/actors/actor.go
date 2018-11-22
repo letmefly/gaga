@@ -7,6 +7,19 @@ import (
 )
 
 type ActorHost interface {
+	SetActor(actor *Actor)
+}
+
+type BaseActorHost struct {
+	actor *Actor
+}
+
+func (h *BaseActorHost) SetActor(actor *Actor) {
+	h.actor = actor
+}
+
+func (h *BaseActorHost) Actor() *Actor {
+	return h.actor
 }
 
 type actorCallRet struct {
@@ -47,6 +60,7 @@ type Actor struct {
 func (a *Actor) init(actorId int32, host ActorHost) {
 	a.actorId = actorId
 	a.host = host
+	host.SetActor(a)
 	a.callQueue = make(chan *actorCall, 1000)
 	a.done = make(chan bool, 1)
 	a.timerCount = 0

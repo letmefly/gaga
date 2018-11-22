@@ -7,6 +7,7 @@ import (
 )
 
 type Room struct {
+	actors.BaseActorHost
 }
 
 func (r *Room) Add(a int, b int, out *int) error {
@@ -31,8 +32,8 @@ func (r *Room) Join(userId string) {
 func main() {
 	actors.Init()
 	room := &Room{}
-	actor := actors.NewActor(room)
-	actorId := actor.ActorId()
+	actorId := actors.NewActor(room)
+	actor := room.Actor()
 	fmt.Println("actorId:", actorId)
 	var ret int
 	err := actors.Call(actorId, (*Room).Add, 100, 200, &ret)

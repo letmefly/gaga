@@ -17,9 +17,9 @@ func Init() {
 	_once.Do(func() { _actorManager.init() })
 }
 
-func NewActor(host ActorHost) *Actor {
-	actor := _actorManager.createActor(host)
-	return actor
+func NewActor(host ActorHost) int32 {
+	actorId := _actorManager.createActor(host)
+	return actorId
 }
 
 func FreeActor(actorId int32) {
@@ -84,7 +84,7 @@ func (m *actorManager) assignId() int32 {
 	return m.count
 }
 
-func (m *actorManager) createActor(host ActorHost) *Actor {
+func (m *actorManager) createActor(host ActorHost) int32 {
 	actorId := m.assignId()
 	currActor := &Actor{
 		actorId: actorId,
@@ -92,7 +92,7 @@ func (m *actorManager) createActor(host ActorHost) *Actor {
 	}
 	currActor.init(actorId, host)
 	m.actors.Store(actorId, currActor)
-	return currActor
+	return actorId
 }
 
 func (m *actorManager) getActor(actorId int32) (*Actor, bool) {
