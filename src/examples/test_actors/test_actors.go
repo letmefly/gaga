@@ -3,6 +3,7 @@ package main
 import (
 	"actors"
 	"fmt"
+	"time"
 )
 
 type Room struct {
@@ -30,7 +31,8 @@ func (r *Room) Join(userId string) {
 func main() {
 	actors.Init()
 	room := &Room{}
-	actorId := actors.NewActor(room)
+	actor := actors.NewActor(room)
+	actorId := actor.ActorId()
 	fmt.Println("actorId:", actorId)
 	var ret int
 	err := actors.Call(actorId, (*Room).Add, 100, 200, &ret)
@@ -52,6 +54,23 @@ func main() {
 	if err != nil {
 		fmt.Println(err)
 	}
+
+	actor.SetTimeoutTimer(5000*time.Millisecond, func() {
+		fmt.Println("TimeoutTimer is time out now")
+	})
+
+	actor.SetLifeTickTimer(1000*time.Millisecond, 10, func(i int32) {
+		fmt.Println("Life Ticker: tick ", i)
+		if i == 10 {
+			fmt.Println("Life Tiker is over")
+		}
+	})
+
+	actor.SetTickTimer(1000*time.Millisecond, func(i int32) {
+		fmt.Println("Test Tick:", i)
+		a, b := actor.GetTimerStats()
+		fmt.Println("timeout timers: ", a, " tick timers: ", b)
+	})
 
 	for {
 		//actors.Call(actorId, (*Room).Add, 200, 300)
