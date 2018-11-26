@@ -1,55 +1,97 @@
 package main
 
-var server_gen_header_tpl = `// DOT NOT EDIT THIS FILE, AUTO GEN!!
-package main
-
-import (
-	"log"
-)
-
-import (
-	. "pb/#{server_name}"
-	
-	"github.com/golang/protobuf/proto"
-)
-`
-
-var server_gen_rpc_header_tpl = `// DOT NOT EDIT THIS FILE, AUTO GEN!!
-package main
+var grpc_gen_header_tpl = `// DOT NOT EDIT THIS FILE, AUTO GEN!!
+package #{server_name}
 
 import (
 	"context"
+	"errors"
 )
 
+type GrpcServer struct {
+}
+`
+
+var msg_gen_header_tpl = `// DOT NOT EDIT THIS FILE, AUTO GEN!!
+package #{server_name}
+
 import (
-	"pb"
-	. "pb/#{server_name}"
-	"types"
-	"google.golang.org/grpc"
+	"errors"
+	"reflect"
+	"log"
+
+	"github.com/golang/protobuf/proto"
 )
 
 `
 
-var server_gen_protouse_tpl = `
-func (s *server) getProtoUseList() []string {
+var msg_gen_protouse_tpl = `
+func GetProtoUseList() []string {
 	protoUseList := []string{#{proto_use_list}
 	}
 	return protoUseList
 }
 `
 
-var server_gen_grpc_tpl = `
-func (s *server) #{rpc_name}(ctx context.Context, param *#{rpc_param}) (*#{rpc_ret}, error) {
-	ret, err := s.logic.handleMessage(types.GRPC, "#{rpc_param}", param)
-	return ret.(*#{rpc_ret}), err
+var msg_gen_grpc_tpl = `
+func (s *GrpcServer) #{rpc_name}(ctx context.Context, param *#{rpc_param}) (*#{rpc_ret}, error) {
+	return nil, errors.New("this api not support")
 }
 `
-var server_gen_pbregister_tpl = `
-func (s *server) registerPbServers(grpcServer *grpc.Server) {
+var msg_gen_decode_tpl = `
+func DecodeMessage(codec string, msgName string, msgData []byte) (interface{}, error) {
+	if codec == "protobuf" {
+		switch msgName {
+			#{decode_case_list}
+		}
+	} else if codec == "json" {
+	}
+	return nil, errors.New("no proto support for " + codec)
+}
+`
+
+var msg_gen_decode_case_tpl = `
+		case "#{message_name}":
+			msg := &#{message_name}{}
+			err := proto.Unmarshal(msgData, msg)
+			if err != nil {
+				return nil, err
+			} else {
+				return msg, nil
+			}
+`
+
+var msg_gen_to_msg_tpl = `
+func To#{message_name}(msg interface{}) *#{message_name} {
+	if reflect.TypeOf(msg).String() != "#{message_name}" {
+		log.Panicln("msg type error")
+	}
+	return msg.(*#{message_name})
+}
+`
+
+var msg_gen_encode_tpl = `
+func EncodeMessage(codec string, msg interface{}) ([]byte, error) {
+	if codec == "protobuf" {
+		buf, err := proto.Marshal(msg.(proto.Message))
+		if err != nil {
+			return nil, err
+		}
+		return buf, nil
+	} else if codec == "json" {
+	}
+	return nil, errors.New("no proto support for " + codec)
+}
+`
+
+/*
+var msg_gen_pbregister_tpl = `
+func RegisterPbServers(s *server, grpcServer *grpc.Server) {
 	pb.RegisterStreamServer(grpcServer, s)
 	Register#{service_name}Server(grpcServer, s)
 }
 `
+
 
 var server_gen_register_part1_tpl = `func (s *server) registerClientHandlers() {`
 var server_gen_register_part2_tpl = `
@@ -84,3 +126,4 @@ func (s *server) ntf_#{message_name}(network int, userIdList []string, msg *#{me
 	s.sendClients(network, userIdList, "#{message_name}", buf)
 }
 `
+*/

@@ -29,6 +29,11 @@ func (r *Room) Join(userId string) {
 	fmt.Println("Join Room: ", userId)
 }
 
+// this function is loop each routine execute schedule
+func (r *Room) ActorLoop() {
+	//fmt.Println("loop..")
+}
+
 func main() {
 	actors.Init()
 	room := &Room{}

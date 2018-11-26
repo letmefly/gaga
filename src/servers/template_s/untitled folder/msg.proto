@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package template;
+
+message TemplateMsgTest {
+	int32 i = 1;
+	string s = 2;
+}
+
+message TemplateMsgTestAck {
+	repeated int32 intList = 1;
+	repeated string strList = 2;
+}
+
+message TemplateMsgTestNtf {
+	repeated int32 intList = 1;
+	repeated string strList = 2;
+}

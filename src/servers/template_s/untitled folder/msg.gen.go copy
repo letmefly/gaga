@@ -1,0 +1,10 @@
+// DOT NOT EDIT THIS FILE, AUTO GEN!!
+package main
+
+import (
+	"errors"
+	"reflect"
+
+	"github.com/golang/protobuf/proto"
+)
+

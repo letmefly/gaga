@@ -8,10 +8,14 @@ import (
 
 type ActorHost interface {
 	SetActor(actor *Actor)
+	ActorLoop()
 }
 
 type BaseActorHost struct {
 	actor *Actor
+}
+
+func (h *BaseActorHost) ActorLoop() {
 }
 
 func (h *BaseActorHost) SetActor(actor *Actor) {
@@ -20,6 +24,10 @@ func (h *BaseActorHost) SetActor(actor *Actor) {
 
 func (h *BaseActorHost) Actor() *Actor {
 	return h.actor
+}
+
+func (h *BaseActorHost) ActorId() int32 {
+	return h.actor.actorId
 }
 
 type actorCallRet struct {
@@ -284,6 +292,7 @@ func (a *Actor) getHostMethod(isAsyn bool, function interface{}, params []interf
 func (a *Actor) startLoop() {
 	go func() {
 		for {
+			a.host.ActorLoop()
 			select {
 			case tickTimer, _ := <-a.tickCbQueue:
 				tickTimer.tickCb(tickTimer.count)

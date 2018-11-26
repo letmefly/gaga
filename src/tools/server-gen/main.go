@@ -34,11 +34,13 @@ func main() {
 					genFile := ""
 					if strings.Contains(file.Name(), "_msg") {
 						genType = "msg"
-						genFile = srcRoot + serverName + "_s/" + "msg.gen.go"
+						genFile = srcRoot + "pb/" + dir.Name() + "/" + serverName + "_msg.gen.go"
 					} else if strings.Contains(file.Name(), "_rpc") {
 						genType = "rpc"
-						genFile = srcRoot + serverName + "_s/" + "rpc.gen.go"
+						genFile = srcRoot + "pb/" + dir.Name() + "/" + serverName + "_rpc.gen.go"
 					}
+
+					log.Println("genFile:", genFile)
 					generator := newServerGen(genType, genFile, serverName, parser)
 					generator.gen()
 				}
