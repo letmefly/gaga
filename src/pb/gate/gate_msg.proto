@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+package gate;
+
+message GateMsgTest {
+	int32 i = 1;
+	string s = 2;
+}
+
+message GateMsgTestAck {
+	repeated int32 intList = 1;
+	repeated string strList = 2;
+}
+
+message LoginReq {
+	string Account = 1;
+	string Password = 2;
+}
+
+message LoginAck {
+	string Error = 1;
+	int32 UserId = 2;
+}
+

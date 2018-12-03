@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"log"
+	"strconv"
 	"sync"
 	"time"
 )
@@ -21,7 +22,7 @@ import (
 // session has only one agent. agent find service by session, service repley find
 // agent by session too.
 type session struct {
-	userId     string
+	userId     int32
 	sessId     string
 	agent      *agent
 	serviceMap map[string]string                       //serviceType to serviceId
@@ -30,7 +31,7 @@ type session struct {
 	cancel     context.CancelFunc
 }
 
-func (s *session) init(userId string) {
+func (s *session) init(userId int32) {
 	s.userId = userId
 	s.sessId = utils.CreateUUID()
 	s.agent = nil
@@ -54,7 +55,7 @@ func (s *session) init(userId string) {
 		}
 		if serviceClient.Conf.IsStream {
 			cli := pb.NewStreamClient(serviceClient.Conn)
-			streamCtx := metadata.NewOutgoingContext(ctx, metadata.New(map[string]string{"user-id": s.userId}))
+			streamCtx := metadata.NewOutgoingContext(ctx, metadata.New(map[string]string{"user-id": strconv.Itoa(int(s.userId)), "codec": "protobuf"}))
 			streamClient, err := cli.CreateStream(streamCtx)
 			if err != nil {
 				log.Println(err.Error())
@@ -118,14 +119,14 @@ func (s *session) streamSend(serviceType string, msgId uint32, msgData []byte) e
 }
 
 type sessionManager struct {
-	userId2sessId map[string]string
+	userId2sessId map[int32]string
 	sessions      map[string]*session
 	timeout       int
 	pool          sync.Pool
 }
 
 func (p *sessionManager) init() {
-	p.userId2sessId = make(map[string]string, 0)
+	p.userId2sessId = make(map[int32]string, 0)
 	p.sessions = make(map[string]*session, 0)
 	p.timeout = 5 * 60
 	p.pool = sync.Pool{
@@ -135,7 +136,7 @@ func (p *sessionManager) init() {
 	}
 }
 
-func (p *sessionManager) createSession(userId string) (*session, error) {
+func (p *sessionManager) createSession(userId int32) (*session, error) {
 	var sess *session
 	sessId, ok := p.userId2sessId[userId]
 	if !ok {

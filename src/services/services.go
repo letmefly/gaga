@@ -173,7 +173,7 @@ func (m *ServiceManager) watchOnlineServices(ctx context.Context) {
 
 func (m *ServiceManager) isUse(serviceType string) bool {
 	for _, v := range m.currServiceConf.ServiceUseList {
-		if v == serviceType {
+		if v == serviceType || v == "*" {
 			return true
 		}
 	}

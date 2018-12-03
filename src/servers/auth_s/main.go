@@ -8,20 +8,21 @@ import (
 )
 
 import (
+	"pb"
+	"pb/auth"
 	"services"
 	"utils"
 
 	"google.golang.org/grpc"
 )
 
-/************************************* main *************************************/
 func main() {
 	ctx, cancel := context.WithCancel(context.Background())
-	server := &server{}
-	server.init(ctx)
+	server := &Server{}
+	server.Init(ctx)
 
-	serviceAddr := "127.0.0.1:9990"
-	serviceId := utils.CreateServiceId("template", serviceAddr)
+	serviceAddr := "127.0.0.1:9991"
+	serviceId := utils.CreateServiceId("auth", serviceAddr)
 
 	lis, err := net.Listen("tcp", serviceAddr)
 	if err != nil {
@@ -31,14 +32,15 @@ func main() {
 	log.Println("Listen on", lis.Addr())
 
 	s := grpc.NewServer()
-	//pb.RegisterStreamServer(s, server)
-	server.registerPbServers(s)
+	pb.RegisterStreamServer(s, server)
+	auth.RegisterAuthServer(s, server)
+
 	services.Register(context.Background(), &services.ServiceConf{
-		ServiceType:    "template",
+		ServiceType:    "auth",
 		ServiceId:      serviceId,
 		ServiceAddr:    serviceAddr,
 		IsStream:       true,
-		ProtoUseList:   server.getProtoUseList(),
+		ProtoUseList:   auth.GetProtoUseList(),
 		ServiceUseList: []string{},
 		TTL:            4,
 	})

@@ -17,8 +17,8 @@ import (
 
 type Server struct {
 	template.GrpcServer
-	users   sync.Map
-	msgPool sync.Pool
+	users sync.Map
+	//msgPool sync.Pool
 }
 
 func (s *Server) Init(ctx context.Context) {
@@ -53,7 +53,7 @@ func (s *Server) CreateStream(stream pb.Stream_CreateStreamServer) error {
 	log.Println("new stream is coming..")
 	meta, _ := metadata.FromIncomingContext(stream.Context())
 	userId := meta["user-id"][0]
-	codec := "protobuf"
+	codec := meta["codec"][0]
 	out := make(chan interface{}, 1000)
 	user := s.CreateUser(userId, out)
 

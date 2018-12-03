@@ -8,6 +8,7 @@ import (
 )
 
 import (
+	"pb/gate"
 	"services"
 	"types"
 )
@@ -124,19 +125,6 @@ func (a *agent) exit() {
 	close(a.outBuf)
 }
 
-func (a *agent) handle(msgId uint32, msgData []byte) error {
-	if msgId == utils.HashCode("login") {
-		userId := "100000"
-		sess, err := getSessionManager().createSession(userId)
-		if err != nil {
-			return err
-		}
-		// bindng each other
-		sess.bindAgent(a)
-	}
-	return nil
-}
-
 func (a *agent) forward(serviceType string, msgId uint32, msgData []byte) error {
 	sess, ok := getSessionManager().getSession(a.sessId)
 	if !ok {
@@ -163,4 +151,14 @@ func (a *agent) toClient(msgId uint32, msgData []byte) {
 	select {
 	case a.outBuf <- msg:
 	}
+}
+
+func (a *agent) handle(msgId uint32, msgData []byte) error {
+	msgName := services.ToMsgName(msgId)
+	msgInterface, err := gate.DecodeMessage("protobuf", msgName, msgData)
+	if err != nil {
+		return err
+	}
+	gateHandler(a, msgName, msgInterface)
+	return nil
 }

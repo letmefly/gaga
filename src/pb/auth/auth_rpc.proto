@@ -7,12 +7,12 @@ service Auth {
 }
 
 message LoginParam {
-	string k = 1;
+	string Account = 1;
+	string Password = 2;
 }
 
 message LoginRet {
-	string err = 1;
-	string k = 2;
-	string v = 3;
+	string Error = 1;
+	int32 UserId = 2;
 }
 

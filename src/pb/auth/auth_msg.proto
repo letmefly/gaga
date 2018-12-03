@@ -2,8 +2,15 @@ syntax = "proto3";
 
 package auth;
 
-message Test {
+message AuthMsgTest {
 	int32 i = 1;
 	string s = 2;
 }
+
+message AuthMsgTestAck {
+	repeated int32 intList = 1;
+	repeated string strList = 2;
+}
+
+
 

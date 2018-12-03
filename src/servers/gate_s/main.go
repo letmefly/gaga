@@ -9,6 +9,7 @@ import (
 )
 
 import (
+	"pb/gate"
 	"services"
 	"utils"
 
@@ -116,8 +117,8 @@ func main() {
 		ServiceId:      currServiceId,
 		ServiceAddr:    currServiceAddr,
 		IsStream:       false,
-		ProtoUseList:   []string{"login"},
-		ServiceUseList: []string{"template"},
+		ProtoUseList:   gate.GetProtoUseList(),
+		ServiceUseList: []string{"*"},
 		TTL:            4,
 	})
 	go httpServer(nil)

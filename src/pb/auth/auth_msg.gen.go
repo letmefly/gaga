@@ -12,7 +12,8 @@ import (
 
 func GetProtoUseList() []string {
 	protoUseList := []string{
-		"Test",
+		"AuthMsgTest",
+		"AuthMsgTestAck",
 	}
 	return protoUseList
 }
@@ -21,8 +22,17 @@ func DecodeMessage(codec string, msgName string, msgData []byte) (interface{}, e
 	if codec == "protobuf" {
 		switch msgName {
 			
-		case "Test":
-			msg := &Test{}
+		case "AuthMsgTest":
+			msg := &AuthMsgTest{}
+			err := proto.Unmarshal(msgData, msg)
+			if err != nil {
+				return nil, err
+			} else {
+				return msg, nil
+			}
+
+		case "AuthMsgTestAck":
+			msg := &AuthMsgTestAck{}
 			err := proto.Unmarshal(msgData, msg)
 			if err != nil {
 				return nil, err
@@ -36,11 +46,18 @@ func DecodeMessage(codec string, msgName string, msgData []byte) (interface{}, e
 	return nil, errors.New("no proto support for " + codec)
 }
 
-func ToTest(msg interface{}) *Test {
-	if reflect.TypeOf(msg).String() != "Test" {
+func ToAuthMsgTest(msg interface{}) *AuthMsgTest {
+	if reflect.TypeOf(msg).String() != "AuthMsgTest" {
 		log.Panicln("msg type error")
 	}
-	return msg.(*Test)
+	return msg.(*AuthMsgTest)
+}
+
+func ToAuthMsgTestAck(msg interface{}) *AuthMsgTestAck {
+	if reflect.TypeOf(msg).String() != "AuthMsgTestAck" {
+		log.Panicln("msg type error")
+	}
+	return msg.(*AuthMsgTestAck)
 }
 
 func EncodeMessage(codec string, msg interface{}) ([]byte, error) {
