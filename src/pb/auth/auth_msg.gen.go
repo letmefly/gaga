@@ -47,14 +47,14 @@ func DecodeMessage(codec string, msgName string, msgData []byte) (interface{}, e
 }
 
 func ToAuthMsgTest(msg interface{}) *AuthMsgTest {
-	if reflect.TypeOf(msg).String() != "AuthMsgTest" {
+	if reflect.TypeOf(msg).String() != "*auth.AuthMsgTest" {
 		log.Panicln("msg type error")
 	}
 	return msg.(*AuthMsgTest)
 }
 
 func ToAuthMsgTestAck(msg interface{}) *AuthMsgTestAck {
-	if reflect.TypeOf(msg).String() != "AuthMsgTestAck" {
+	if reflect.TypeOf(msg).String() != "*auth.AuthMsgTestAck" {
 		log.Panicln("msg type error")
 	}
 	return msg.(*AuthMsgTestAck)

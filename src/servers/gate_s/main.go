@@ -128,7 +128,7 @@ func main() {
 func httpServer(config *Config) {
 	http.HandleFunc("/httpGate", httpHandler)
 	http.HandleFunc("/wsGate", wsHandler)
-	log.Printf("About to listen on 10443. Go to https://127.0.0.1:10443/")
+	log.Println("start http server listen on 12345 ...")
 	//err := http.ListenAndServeTLS(":10443", "cert.pem", "key.pem", nil)
 	err := http.ListenAndServe(":12345", nil)
 	log.Fatal(err)
@@ -162,6 +162,7 @@ func httpHandler(w http.ResponseWriter, req *http.Request) {
 }
 
 func wsHandler(w http.ResponseWriter, r *http.Request) {
+	log.Println("ws connection")
 	conn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
 		log.Println(err)
@@ -199,8 +200,8 @@ func handleWsClient(conn *websocket.Conn, config *Config) {
 		}
 		switch messageType {
 		case websocket.TextMessage:
-			agent.toService(message)
 		case websocket.BinaryMessage:
+			agent.toService(message)
 		case websocket.CloseMessage:
 		case websocket.PingMessage:
 		case websocket.PongMessage:

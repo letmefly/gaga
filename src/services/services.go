@@ -95,11 +95,11 @@ func (m *ServiceManager) init(ctx context.Context, conf *ServiceConf) {
 		log.Fatal(err)
 	}
 	m.etcdcli = cli
-
 	m.registerMyself(ctx)
 	m.fetchOnlineServices(ctx)
 	m.addOtherServices(ctx)
 	go m.watchOnlineServices(ctx)
+
 }
 
 func (m *ServiceManager) registerMyself(ctx context.Context) {
@@ -192,7 +192,11 @@ func (m *ServiceManager) addService(serviceId string, conf *ServiceConf) {
 	defer m.mu.Unlock()
 	serviceAddr := conf.ServiceAddr
 	serviceType := conf.ServiceType
+
 	m.createTLB(conf)
+	if conf.ServiceType == m.currServiceConf.ServiceType {
+		return
+	}
 
 	if !m.isUse(conf.ServiceType) {
 		return
@@ -208,6 +212,8 @@ func (m *ServiceManager) addService(serviceId string, conf *ServiceConf) {
 	if _, ok2 := serviceBundle.serviceClients[serviceId]; ok2 {
 		return
 	}
+
+	log.Println("[services] add service ", serviceId, "->", serviceAddr, "trying")
 	conn, err := grpc.Dial(serviceAddr, grpc.WithBlock(), grpc.WithInsecure())
 	if err != nil {
 		log.Println(err)
@@ -244,7 +250,7 @@ func (m *ServiceManager) removeService(serviceId string) {
 func (m *ServiceManager) createTLB(conf *ServiceConf) {
 	for _, v := range conf.ProtoUseList {
 		msgName := v
-		msgId := utils.HashCode(conf.ServiceType + msgName)
+		msgId := utils.HashCode(conf.ServiceType + "." + msgName)
 		m.toMsgIdMap[msgName] = msgId
 		m.toMsgNameMap[msgId] = msgName
 		m.toServiceTypeMap[msgId] = conf.ServiceType
@@ -254,7 +260,7 @@ func (m *ServiceManager) createTLB(conf *ServiceConf) {
 func (m *ServiceManager) deleteTLB(conf *ServiceConf) {
 	for _, v := range conf.ProtoUseList {
 		msgName := v
-		msgId := utils.HashCode(msgName)
+		msgId := utils.HashCode(conf.ServiceType + "." + msgName)
 		delete(m.toMsgIdMap, msgName)
 		delete(m.toMsgNameMap, msgId)
 		delete(m.toServiceTypeMap, msgId)

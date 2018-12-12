@@ -63,7 +63,7 @@ var msg_gen_decode_case_tpl = `
 
 var msg_gen_to_msg_tpl = `
 func To#{message_name}(msg interface{}) *#{message_name} {
-	if reflect.TypeOf(msg).String() != "#{message_name}" {
+	if reflect.TypeOf(msg).String() != "*#{server_name}.#{message_name}" {
 		log.Panicln("msg type error")
 	}
 	return msg.(*#{message_name})

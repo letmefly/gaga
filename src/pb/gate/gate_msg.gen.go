@@ -67,28 +67,28 @@ func DecodeMessage(codec string, msgName string, msgData []byte) (interface{}, e
 }
 
 func ToGateMsgTest(msg interface{}) *GateMsgTest {
-	if reflect.TypeOf(msg).String() != "GateMsgTest" {
+	if reflect.TypeOf(msg).String() != "*gate.GateMsgTest" {
 		log.Panicln("msg type error")
 	}
 	return msg.(*GateMsgTest)
 }
 
 func ToGateMsgTestAck(msg interface{}) *GateMsgTestAck {
-	if reflect.TypeOf(msg).String() != "GateMsgTestAck" {
+	if reflect.TypeOf(msg).String() != "*gate.GateMsgTestAck" {
 		log.Panicln("msg type error")
 	}
 	return msg.(*GateMsgTestAck)
 }
 
 func ToLoginReq(msg interface{}) *LoginReq {
-	if reflect.TypeOf(msg).String() != "LoginReq" {
+	if reflect.TypeOf(msg).String() != "*gate.LoginReq" {
 		log.Panicln("msg type error")
 	}
 	return msg.(*LoginReq)
 }
 
 func ToLoginAck(msg interface{}) *LoginAck {
-	if reflect.TypeOf(msg).String() != "LoginAck" {
+	if reflect.TypeOf(msg).String() != "*gate.LoginAck" {
 		log.Panicln("msg type error")
 	}
 	return msg.(*LoginAck)

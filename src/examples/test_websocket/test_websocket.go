@@ -19,7 +19,7 @@ func main() {
 	log.SetFlags(0)
 
 	for i := 0; i < 20; i++ {
-		log.Println(utils.HashCode(string("test-hash-code") + string(1)))
+		log.Println(utils.HashCode(string("test-hash-code") + string(i)))
 	}
 
 	interrupt := make(chan os.Signal, 1)

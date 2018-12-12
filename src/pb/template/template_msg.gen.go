@@ -57,21 +57,21 @@ func DecodeMessage(codec string, msgName string, msgData []byte) (interface{}, e
 }
 
 func ToTemplateMsgTest(msg interface{}) *TemplateMsgTest {
-	if reflect.TypeOf(msg).String() != "TemplateMsgTest" {
+	if reflect.TypeOf(msg).String() != "*template.TemplateMsgTest" {
 		log.Panicln("msg type error")
 	}
 	return msg.(*TemplateMsgTest)
 }
 
 func ToTemplateMsgTestAck(msg interface{}) *TemplateMsgTestAck {
-	if reflect.TypeOf(msg).String() != "TemplateMsgTestAck" {
+	if reflect.TypeOf(msg).String() != "*template.TemplateMsgTestAck" {
 		log.Panicln("msg type error")
 	}
 	return msg.(*TemplateMsgTestAck)
 }
 
 func ToTemplateMsgTestNtf(msg interface{}) *TemplateMsgTestNtf {
-	if reflect.TypeOf(msg).String() != "TemplateMsgTestNtf" {
+	if reflect.TypeOf(msg).String() != "*template.TemplateMsgTestNtf" {
 		log.Panicln("msg type error")
 	}
 	return msg.(*TemplateMsgTestNtf)

@@ -2,7 +2,7 @@ package main
 
 import (
 	"context"
-	"errors"
+	//"errors"
 	"log"
 	"reflect"
 	"sync"
@@ -100,5 +100,7 @@ func (s *Server) CreateStream(stream pb.Stream_CreateStreamServer) error {
 }
 
 func (s *Server) Login(ctx context.Context, param *auth.LoginParam) (*auth.LoginRet, error) {
-	return nil, errors.New("this api not support")
+	log.Println("Login")
+	//return nil, errors.New("this api not support")
+	return &auth.LoginRet{Error: "ok", UserId: 100000}, nil
 }

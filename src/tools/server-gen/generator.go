@@ -120,6 +120,7 @@ func (g *ServerGen) gen_to_msg() {
 		if defType.def == "message" && defType.parentType == "" {
 			toMsgStr := msg_gen_to_msg_tpl
 			toMsgStr = strings.Replace(toMsgStr, "#{message_name}", defType.name, -1)
+			toMsgStr = strings.Replace(toMsgStr, "#{server_name}", g.serverName, -1)
 			g.toMsg += toMsgStr
 		}
 	}
