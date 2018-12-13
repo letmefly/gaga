@@ -137,8 +137,22 @@ func httpServer(config *Config) {
 
 func httpHandler(w http.ResponseWriter, req *http.Request) {
 	log.Println("New Http Connection")
+	if req.Method != "POST" {
+		w.Write([]byte("Only Support Post Method!"))
+		return
+	}
+	body, _ := ioutil.ReadAll(req.Body)
+	if len(body) == 0 {
+		w.Write([]byte("Post Data Is Blank"))
+		return
+	}
+	sessId := ""
 	vars := req.URL.Query()
-	sessId := vars["sessId"][0]
+	if vars["sessId"] != nil {
+		sessId = vars["sessId"][0]
+	}
+
+	log.Println("sessId:", sessId)
 	ctx, cancel := context.WithCancel(context.Background())
 	defer func() {
 		cancel()
@@ -151,10 +165,7 @@ func httpHandler(w http.ResponseWriter, req *http.Request) {
 	agent.start(ctx)
 	defer freeAgent(agent)
 
-	body, err := ioutil.ReadAll(req.Body)
-	if err != nil {
-		return
-	}
+	log.Printf("body:%s\n", body)
 	agent.toService(body)
 	select {
 	case <-ctx.Done():

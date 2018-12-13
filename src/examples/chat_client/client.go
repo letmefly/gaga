@@ -17,10 +17,14 @@ import (
 type ChatClient struct {
 	Conn *websocket.Conn
 	seq  int32
+	done chan bool
 }
 
 func NewChatClient() *ChatClient {
-	ret := &ChatClient{seq: 0}
+	ret := &ChatClient{
+		seq:  0,
+		done: make(chan bool, 0),
+	}
 	return ret
 }
 
@@ -44,18 +48,19 @@ func (c *ChatClient) StartRecvLoop() {
 				fmt.Println("read:", err)
 				return
 			}
-			recevSeq, msgId, msgData := utils.UnpackMsg(message)
-			fmt.Printf("recv: recevSeq %d, msgId %d\n", recevSeq, msgId)
+			_, msgId, msgData := utils.UnpackMsg(message)
+			//fmt.Printf("recv: recevSeq %d, msgId %d\n", recevSeq, msgId)
 			c.HandleMessage(msgId, msgData)
 		}
 	}()
 }
 
 func (c *ChatClient) Send(msg interface{}) {
+	fmt.Println("call start")
 	msgName := reflect.TypeOf(msg).String()
 	msgName = strings.Replace(msgName, "*", "", 1)
 	msgId := utils.HashCode(msgName)
-	fmt.Println(msgName, "msgId", msgId)
+	//fmt.Println(msgName, "msgId", msgId)
 	buf, err := proto.Marshal(msg.(proto.Message))
 	if err != nil {
 		fmt.Errorf(err.Error())
@@ -75,7 +80,9 @@ func (c *ChatClient) HandleMessage(msgId uint32, msgData []byte) {
 			fmt.Errorf(err.Error())
 			return
 		}
-		fmt.Println("loginAck:", loginAck.Error, loginAck.UserId)
+		//fmt.Println("loginAck:", loginAck.Error, loginAck.UserId)
+		c.done <- true
+		fmt.Println("call end")
 	}
 }
 
@@ -85,4 +92,8 @@ func (c *ChatClient) Distroy() {
 
 func (c *ChatClient) LoginAuth(account string, password string) {
 	c.Send(&gate.LoginReq{Account: account, Password: password})
+	select {
+	case <-c.done:
+		return
+	}
 }
