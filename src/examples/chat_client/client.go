@@ -8,6 +8,7 @@ import (
 	"utils"
 
 	"pb/gate"
+	"pb/template"
 	"strings"
 
 	"github.com/golang/protobuf/proto"
@@ -15,21 +16,28 @@ import (
 )
 
 type ChatClient struct {
-	Conn *websocket.Conn
-	seq  int32
-	done chan bool
+	Conn     *websocket.Conn
+	seq      int32
+	done     chan bool
+	addr     string
+	account  string
+	password string
+	userId   int32
 }
 
-func NewChatClient() *ChatClient {
+func NewChatClient(addr string, account string, password string) *ChatClient {
 	ret := &ChatClient{
-		seq:  0,
-		done: make(chan bool, 0),
+		seq:      0,
+		done:     make(chan bool, 0),
+		addr:     addr,
+		account:  account,
+		password: password,
 	}
 	return ret
 }
 
-func (c *ChatClient) ConnectServer(addr string) {
-	var host = flag.String("addr", addr, "http service address")
+func (c *ChatClient) Start() {
+	var host = flag.String("addr", c.addr, "http service address")
 	u := url.URL{Scheme: "ws", Host: *host, Path: "/wsGate"}
 	conn, _, err := websocket.DefaultDialer.Dial(u.String(), nil)
 	c.Conn = conn
@@ -38,6 +46,10 @@ func (c *ChatClient) ConnectServer(addr string) {
 		return
 	}
 	c.StartRecvLoop()
+
+	// start login and auto chat
+	// message 1
+	c.LoginAuth(c.account, c.password)
 }
 
 func (c *ChatClient) StartRecvLoop() {
@@ -48,8 +60,8 @@ func (c *ChatClient) StartRecvLoop() {
 				fmt.Println("read:", err)
 				return
 			}
-			_, msgId, msgData := utils.UnpackMsg(message)
-			//fmt.Printf("recv: recevSeq %d, msgId %d\n", recevSeq, msgId)
+			recevSeq, msgId, msgData := utils.UnpackMsg(message)
+			fmt.Printf("recv: recevSeq %d, msgId %d\n", recevSeq, msgId)
 			c.HandleMessage(msgId, msgData)
 		}
 	}()
@@ -73,6 +85,7 @@ func (c *ChatClient) Send(msg interface{}) {
 
 func (c *ChatClient) HandleMessage(msgId uint32, msgData []byte) {
 	switch msgId {
+	// message 2
 	case utils.HashCode("gate.LoginAck"):
 		loginAck := &gate.LoginAck{}
 		err := proto.Unmarshal(msgData, loginAck)
@@ -80,9 +93,12 @@ func (c *ChatClient) HandleMessage(msgId uint32, msgData []byte) {
 			fmt.Errorf(err.Error())
 			return
 		}
+		c.userId = loginAck.UserId
 		//fmt.Println("loginAck:", loginAck.Error, loginAck.UserId)
-		c.done <- true
-		fmt.Println("call end")
+		//c.done <- true
+		//fmt.Println("call end")
+
+		c.TemplateMsgTest()
 	}
 }
 
@@ -92,8 +108,22 @@ func (c *ChatClient) Distroy() {
 
 func (c *ChatClient) LoginAuth(account string, password string) {
 	c.Send(&gate.LoginReq{Account: account, Password: password})
-	select {
-	case <-c.done:
-		return
-	}
+	/*
+		select {
+		case <-c.done:
+			return
+		}
+	*/
+}
+
+func (c *ChatClient) TemplateMsgTest() {
+	c.Send(&template.TemplateMsgTest{I: 10009, S: "this is test msg"})
+}
+
+func (c *ChatClient) GetRoom(userId string) {
+
+}
+
+func (c *ChatClient) JoinRoom(roomId string) {
+
 }

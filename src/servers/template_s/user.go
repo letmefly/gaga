@@ -31,11 +31,16 @@ func (u *User) SetOutChan(out chan interface{}) {
 
 func (u *User) HandleMessages(name string, msg interface{}) {
 	switch name {
-	case "TemplateMsgTest":
+	case "template.TemplateMsgTest":
 		msgTemplateMsgTest := template.ToTemplateMsgTest(msg)
 		if msgTemplateMsgTest == nil {
 			log.Fatalln("type error")
 		}
+		log.Println(msgTemplateMsgTest.I, msgTemplateMsgTest.S)
+		u.SendMessage(&template.TemplateMsgTestAck{
+			IntList: []int32{1, 2, 3, 4},
+			StrList: []string{"aa", "bb"},
+		})
 	}
 }
 

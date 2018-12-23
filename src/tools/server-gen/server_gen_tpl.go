@@ -51,7 +51,7 @@ func DecodeMessage(codec string, msgName string, msgData []byte) (interface{}, e
 `
 
 var msg_gen_decode_case_tpl = `
-		case "#{message_name}":
+		case "#{server_name}.#{message_name}":
 			msg := &#{message_name}{}
 			err := proto.Unmarshal(msgData, msg)
 			if err != nil {

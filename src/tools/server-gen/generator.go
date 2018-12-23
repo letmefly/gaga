@@ -108,6 +108,7 @@ func (g *ServerGen) gen_msg_decode() {
 		//log.Printf("%s %s %s\n", defType.parentType, defType.def, defType.name)
 		if defType.def == "message" && defType.parentType == "" {
 			decode_case := msg_gen_decode_case_tpl
+			decode_case = strings.Replace(decode_case, "#{server_name}", g.serverName, -1)
 			decode_case = strings.Replace(decode_case, "#{message_name}", defType.name, -1)
 			decode_case_list += decode_case
 		}

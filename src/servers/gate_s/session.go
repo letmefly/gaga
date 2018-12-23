@@ -54,6 +54,7 @@ func (s *session) init(userId int32) {
 			return
 		}
 		if serviceClient.Conf.IsStream {
+			log.Println("create stream client..")
 			cli := pb.NewStreamClient(serviceClient.Conn)
 			streamCtx := metadata.NewOutgoingContext(ctx, metadata.New(map[string]string{"user-id": strconv.Itoa(int(s.userId)), "codec": "protobuf"}))
 			streamClient, err := cli.CreateStream(streamCtx)
@@ -111,6 +112,7 @@ func (s *session) streamSend(serviceType string, msgId uint32, msgData []byte) e
 	}
 	frame := &pb.StreamFrame{
 		Type:    pb.StreamFrameType_Message,
+		Codec:   "protobuf",
 		MsgId:   int32(msgId),
 		MsgData: msgData,
 	}

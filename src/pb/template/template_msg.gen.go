@@ -23,7 +23,7 @@ func DecodeMessage(codec string, msgName string, msgData []byte) (interface{}, e
 	if codec == "protobuf" {
 		switch msgName {
 			
-		case "TemplateMsgTest":
+		case "template.TemplateMsgTest":
 			msg := &TemplateMsgTest{}
 			err := proto.Unmarshal(msgData, msg)
 			if err != nil {
@@ -32,7 +32,7 @@ func DecodeMessage(codec string, msgName string, msgData []byte) (interface{}, e
 				return msg, nil
 			}
 
-		case "TemplateMsgTestAck":
+		case "template.TemplateMsgTestAck":
 			msg := &TemplateMsgTestAck{}
 			err := proto.Unmarshal(msgData, msg)
 			if err != nil {
@@ -41,7 +41,7 @@ func DecodeMessage(codec string, msgName string, msgData []byte) (interface{}, e
 				return msg, nil
 			}
 
-		case "TemplateMsgTestNtf":
+		case "template.TemplateMsgTestNtf":
 			msg := &TemplateMsgTestNtf{}
 			err := proto.Unmarshal(msgData, msg)
 			if err != nil {

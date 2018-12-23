@@ -24,7 +24,7 @@ func DecodeMessage(codec string, msgName string, msgData []byte) (interface{}, e
 	if codec == "protobuf" {
 		switch msgName {
 			
-		case "GateMsgTest":
+		case "gate.GateMsgTest":
 			msg := &GateMsgTest{}
 			err := proto.Unmarshal(msgData, msg)
 			if err != nil {
@@ -33,7 +33,7 @@ func DecodeMessage(codec string, msgName string, msgData []byte) (interface{}, e
 				return msg, nil
 			}
 
-		case "GateMsgTestAck":
+		case "gate.GateMsgTestAck":
 			msg := &GateMsgTestAck{}
 			err := proto.Unmarshal(msgData, msg)
 			if err != nil {
@@ -42,7 +42,7 @@ func DecodeMessage(codec string, msgName string, msgData []byte) (interface{}, e
 				return msg, nil
 			}
 
-		case "LoginReq":
+		case "gate.LoginReq":
 			msg := &LoginReq{}
 			err := proto.Unmarshal(msgData, msg)
 			if err != nil {
@@ -51,7 +51,7 @@ func DecodeMessage(codec string, msgName string, msgData []byte) (interface{}, e
 				return msg, nil
 			}
 
-		case "LoginAck":
+		case "gate.LoginAck":
 			msg := &LoginAck{}
 			err := proto.Unmarshal(msgData, msg)
 			if err != nil {

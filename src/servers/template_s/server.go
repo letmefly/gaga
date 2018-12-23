@@ -4,6 +4,7 @@ import (
 	"context"
 	"log"
 	"reflect"
+	"strings"
 	"sync"
 )
 import (
@@ -61,8 +62,10 @@ func (s *Server) CreateStream(stream pb.Stream_CreateStreamServer) error {
 		for {
 			select {
 			case outMsg := <-out:
-				msgName := reflect.TypeOf(outMsg)
-				msgId := services.ToMsgId(msgName.String())
+				msgName := reflect.TypeOf(outMsg).String()
+				msgName = strings.Replace(msgName, "*", "", 1)
+				msgId := services.ToMsgId(msgName)
+				log.Println("send msgName:", msgName, msgId)
 				data, _ := template.EncodeMessage(codec, outMsg)
 				stream.Send(&pb.StreamFrame{
 					Type:    pb.StreamFrameType_Message,
@@ -89,6 +92,7 @@ func (s *Server) CreateStream(stream pb.Stream_CreateStreamServer) error {
 		}
 		codec := frame.Codec
 		msgName := services.ToMsgName(uint32(frame.MsgId))
+		log.Println("stream recv msgName", msgName)
 		msgData := frame.MsgData
 		msg, decodeErr := template.DecodeMessage(codec, msgName, msgData)
 		if decodeErr != nil {

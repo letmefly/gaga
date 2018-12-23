@@ -199,6 +199,7 @@ func (m *ServiceManager) addService(serviceId string, conf *ServiceConf) {
 	}
 
 	if !m.isUse(conf.ServiceType) {
+		log.Println(conf.ServiceType, "no use")
 		return
 	}
 	m.onlineServices[serviceId] = conf
@@ -249,11 +250,12 @@ func (m *ServiceManager) removeService(serviceId string) {
 
 func (m *ServiceManager) createTLB(conf *ServiceConf) {
 	for _, v := range conf.ProtoUseList {
-		msgName := v
-		msgId := utils.HashCode(conf.ServiceType + "." + msgName)
+		msgName := conf.ServiceType + "." + v
+		msgId := utils.HashCode(msgName)
 		m.toMsgIdMap[msgName] = msgId
 		m.toMsgNameMap[msgId] = msgName
 		m.toServiceTypeMap[msgId] = conf.ServiceType
+		log.Println("msgName", msgName, "msgId", msgId)
 	}
 }
 

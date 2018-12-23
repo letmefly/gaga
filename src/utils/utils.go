@@ -116,6 +116,15 @@ func CreateUUID() string {
 	return Base64EncodeV2(u1.String())
 }
 
+func CreateUUID2() string {
+	u1, err := uuid.NewV4()
+	if err != nil {
+		log.Fatal("Create UUID fail")
+		return ""
+	}
+	return u1.String()
+}
+
 func CreateServiceId(serviceType string, addr string) string {
 	ret := serviceType + "__" + Base64EncodeV1(addr)
 	return string(ret[0 : len(ret)-1])

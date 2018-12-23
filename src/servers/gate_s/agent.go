@@ -78,6 +78,7 @@ func (a *agent) start(ctx context.Context) {
 					log.Println("invalid msgId")
 					return
 				}
+				log.Println("dest server:", t)
 				if t == "gate" {
 					a.handle(msgId, msgData)
 				} else {

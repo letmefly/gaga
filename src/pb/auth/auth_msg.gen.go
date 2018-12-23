@@ -22,7 +22,7 @@ func DecodeMessage(codec string, msgName string, msgData []byte) (interface{}, e
 	if codec == "protobuf" {
 		switch msgName {
 			
-		case "AuthMsgTest":
+		case "auth.AuthMsgTest":
 			msg := &AuthMsgTest{}
 			err := proto.Unmarshal(msgData, msg)
 			if err != nil {
@@ -31,7 +31,7 @@ func DecodeMessage(codec string, msgName string, msgData []byte) (interface{}, e
 				return msg, nil
 			}
 
-		case "AuthMsgTestAck":
+		case "auth.AuthMsgTestAck":
 			msg := &AuthMsgTestAck{}
 			err := proto.Unmarshal(msgData, msg)
 			if err != nil {

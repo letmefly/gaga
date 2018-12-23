@@ -118,7 +118,7 @@ func main() {
 		ServiceAddr:    currServiceAddr,
 		IsStream:       false,
 		ProtoUseList:   gate.GetProtoUseList(),
-		ServiceUseList: []string{"*"},
+		ServiceUseList: []string{"auth", "template"},
 		TTL:            4,
 	})
 	go httpServer(nil)
