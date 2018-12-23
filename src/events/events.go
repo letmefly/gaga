@@ -7,14 +7,14 @@ import (
 	"github.com/nsqio/go-nsq"
 )
 
-type EventCB func(string)
+type EventCB func([]byte)
 
 type consumerHandler struct {
 	eventCB EventCB
 }
 
 func (h *consumerHandler) HandleMessage(message *nsq.Message) error {
-	h.eventCB("json-format")
+	h.eventCB(message.Body)
 	return nil
 }
 
